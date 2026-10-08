@@ -1,0 +1,76 @@
+clear 
+**new diss do file
+
+import excel "/Users/olliemileson/Desktop/diss regression variables only.xlsx", sheet("Sheet1") cellrange(A2:R1651) firstrow
+
+egen COMP = group(COMPANY)
+
+gen year = real(substr(DATEB, 1, 4))
+
+gen q = real(substr(DATEB, 6, 1))
+
+gen qdate = yq(year, q)
+
+format qdate %tq
+
+xtset COMP qdate
+
+destring MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7 NET_DEBT_TO_EBITDA Blev Mlev DEratio, replace ignore("n/a" "NA" "n")
+
+tab M7
+
+xtset COMP qdate
+
+asdoc sum MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7 NET_DEBT_TO_EBITDA Blev Mlev DEratio
+
+**correlation matrix
+
+asdoc pwcorr MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7
+
+reg Mlev MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7
+
+asdoc vif
+
+**regressions
+
+asdoc xtreg Mlev MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP) 
+
+asdoc xtreg Blev MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP) 
+
+asdoc xtreg NET_DEBT_TO_EBITDA MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP)
+
+asdoc xtreg DEratio MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP)
+
+clear
+**just Mag 7
+import excel "/Users/olliemileson/Desktop/diss regression variables only.xlsx", sheet("Sheet1") cellrange(A2:R1651) firstrow
+
+drop in 103/118
+
+drop in 120/1633
+
+egen COMP = group(COMPANY)
+
+gen year = real(substr(DATEB, 1, 4))
+
+gen q = real(substr(DATEB, 6, 1))
+
+gen qdate = yq(year, q)
+
+format qdate %tq
+
+xtset COMP qdate
+
+destring MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7 NET_DEBT_TO_EBITDA Blev Mlev DEratio, replace ignore("n/a" "NA" "n")
+
+xtset COMP qdate
+
+asdoc sum MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7 NET_DEBT_TO_EBITDA Blev Mlev DEratio
+
+asdoc xtreg Mlev MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP) 
+
+asdoc xtreg Blev MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP) 
+
+asdoc xtreg NET_DEBT_TO_EBITDA MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP)
+
+asdoc xtreg DEratio MKTCAP ROA REVGROWTH liquidity Capextorev RDIntensity FEDRATE GDP INF DEFSPREAD M7, fe vce(cluster COMP)
